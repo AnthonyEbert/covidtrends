@@ -698,9 +698,9 @@ let app = new Vue({
 
     selectedData: 'Confirmed Cases',
 
-    regions: ['World', 'Italy'],
+    regions: ['Italy', 'World'],
 
-    selectedRegion: 'World',
+    selectedRegion: 'Italy',
 
     sliderSelected: false,
 
