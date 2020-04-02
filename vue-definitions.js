@@ -428,9 +428,9 @@ let app = new Vue({
       if (selectedRegion != 'US') {
         let url;
         if (selectedData == 'Confirmed Cases') {
-         url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
+         url = "https://raw.githubusercontent.com/AnthonyEbert/ItalyCovid19/master/johns-hopkins-format/time_series_19-covid-Confirmed_Italy.csv";
         } else if (selectedData == 'Reported Deaths') {
-         url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv";
+         url = "https://raw.githubusercontent.com/AnthonyEbert/ItalyCovid19/master/johns-hopkins-format/time_series_19-covid-Deaths_Italy.csv";
         } else {
           return;
         }
@@ -516,9 +516,7 @@ let app = new Vue({
       this.covidData = covidData.filter(e => e.maxCases > this.minCasesInCountry);
       this.countries = this.covidData.map(e => e.country).sort();
       const topCountries = this.covidData.sort((a, b) => b.maxCases - a.maxCases).slice(0, 9).map(e => e.country);
-      const notableCountries = ['China', 'India', 'US', // Top 3 by population
-          'South Korea', 'Japan', // Observed success so far
-          'Canada', 'Australia']; // These appear in the region selector
+      const notableCountries = ['Italy']; // These appear in the region selector
 
       // TODO: clean this logic up later
       // expected behavior: generate/overwrite selected locations if: 1. data loaded from URL, but no selected locations are loaded. 2. data refreshed (e.g. changing region)
@@ -684,13 +682,8 @@ let app = new Vue({
       switch (this.selectedRegion) {
         case 'World':
           return 'Countries';
-        case 'Australia':
-        case 'US':
-          return 'States';
-        case 'China':
-          return 'Provinces and Regions';
-        case 'Canada':
-          return 'Provinces';
+        case 'Italy':
+          return 'Regions';
         default:
           return 'Regions';
       }
@@ -705,7 +698,7 @@ let app = new Vue({
 
     selectedData: 'Confirmed Cases',
 
-    regions: ['World', 'US', 'China', 'Australia', 'Canada'],
+    regions: ['World', 'Italy'],
 
     selectedRegion: 'World',
 
