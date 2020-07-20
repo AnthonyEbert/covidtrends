@@ -429,12 +429,17 @@ let app = new Vue({
         let url;
         if (selectedData == 'Confirmed Cases') {
          url = "https://raw.githubusercontent.com/AnthonyEbert/ItalyCovid19/master/johns-hopkins-format/time_series_19-covid-Confirmed_Italy.csv";
+         url2 = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv';
         } else if (selectedData == 'Reported Deaths') {
          url = "https://raw.githubusercontent.com/AnthonyEbert/ItalyCovid19/master/johns-hopkins-format/time_series_19-covid-Deaths_Italy.csv";
+         url2 = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv';
         } else {
           return;
         }
         Plotly.d3.csv(url, (data) => this.processData(data, selectedRegion, updateSelectedCountries));
+        Plotly.d3.csv(url2, (data2) => this.processData(data2, selectedRegion, updateSelectedCountries));
+        Plotly.d3.csv('Country/Region', (data2) => this.filter(e => e["Province/State"] != "  "))
+        Plotly.d3.csv(data2, (data) => this.append())
       } else { // selectedRegion == 'US'
         const type = (selectedData == 'Reported Deaths') ? 'deaths' : 'cases'
         const url = "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv";
