@@ -88,7 +88,7 @@ Vue.component('graph', {
           color: 'rgba(0,0,0,0.15)'
         },
         hoverinfo:'x+y+text',
-        hovertemplate: '%{text}<br>Total ' + this.selectedData +': %{x:,}<br>Weekly ' + this.selectedData +': %{y:,}<extra></extra>',
+        hovertemplate: '%{text}<br>Totale dei ' + this.selectedData +': %{x:,}<br>Weekly ' + this.selectedData +': %{y:,}<extra></extra>',
       })
       );
 
@@ -104,7 +104,7 @@ Vue.component('graph', {
           size: 6,
           color: 'rgba(254, 52, 110, 1)'
         },
-        hovertemplate: '%{data.text}<br>Total ' + this.selectedData +': %{x:,}<br>Weekly ' + this.selectedData +': %{y:,}<extra></extra>',
+        hovertemplate: '%{data.text}<br>Totale dei ' + this.selectedData +': %{x:,}<br>Weekly ' + this.selectedData +': %{y:,}<extra></extra>',
 
       })
       );
@@ -131,7 +131,7 @@ Vue.component('graph', {
         title: 'Trajectory of COVID-19 '+ this.selectedData + ' (' + this.dates[this.day - 1] + ')',
         showlegend: false,
         xaxis: {
-          title: 'Total ' + this.selectedData,
+          title: 'Totale dei ' + this.selectedData,
           type: this.scale == 'Logarithmic Scale' ? 'log' : 'linear',
           range: this.xrange,
           titlefont: {
@@ -140,7 +140,7 @@ Vue.component('graph', {
           },
         },
         yaxis: {
-          title: 'New ' + this.selectedData + ' (in the Past Week)',
+          title: 'Nuovo ' + this.selectedData + ' (nella scorsa settimana)',
           type: this.scale == 'Logarithmic Scale' ? 'log' : 'linear',
           range: this.yrange,
           titlefont: {
@@ -324,9 +324,9 @@ let app = new Vue({
       if (urlParameters.has('data')) {
         let myData = urlParameters.get('data').toLowerCase();
         if (myData == 'cases') {
-          this.selectedData = 'Confirmed Cases';
+          this.selectedData = 'casi positivi';
         } else if (myData == 'deaths') {
-          this.selectedData = 'Reported Deaths';
+          this.selectedData = 'deceduti';
         }
 
       }
@@ -427,21 +427,20 @@ let app = new Vue({
       //console.log('pulling', selectedData, ' for ', selectedRegion);
       if (selectedRegion != 'US') {
         let url;
-        if (selectedData == 'Confirmed Cases') {
+        if (selectedData == 'casi positivi') {
          url = "https://raw.githubusercontent.com/AnthonyEbert/ItalyCovid19/master/johns-hopkins-format/time_series_19-covid-Confirmed_Italy.csv";
-         url2 = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv';
-        } else if (selectedData == 'Reported Deaths') {
+        } else if (selectedData == 'deceduti') {
          url = "https://raw.githubusercontent.com/AnthonyEbert/ItalyCovid19/master/johns-hopkins-format/time_series_19-covid-Deaths_Italy.csv";
-         url2 = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv';
         } else {
           return;
         }
         Plotly.d3.csv(url, (data) => this.processData(data, selectedRegion, updateSelectedCountries));
-        Plotly.d3.csv(url2, (data2) => this.processData(data2, selectedRegion, updateSelectedCountries));
-        Plotly.d3.csv('Country/Region', (data2) => this.filter(e => e["Province/State"] != "  "))
-        Plotly.d3.csv(data2, (data) => this.append())
+
+        //Plotly.d3.csv(url, (data) => this.processData(data, selectedRegion, updateSelectedCountries));
+        //Plotly.d3.csv(url2, (data2) => this.filter(e => e["Country/Region"] != "Italy"))
+        //Plotly.d3.csv(data2, (data) => this.append())
       } else { // selectedRegion == 'US'
-        const type = (selectedData == 'Reported Deaths') ? 'deaths' : 'cases'
+        const type = (selectedData == 'deceduti') ? 'deaths' : 'cases'
         const url = "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv";
         Plotly.d3.csv(url, (data) => this.processData(this.preprocessNYTData(data, type), selectedRegion, updateSelectedCountries));
       }
@@ -479,7 +478,7 @@ let app = new Vue({
       this.dates = dates;
 
       let grouped;
-      if (selectedRegion == 'World') {
+      if (selectedRegion == 'Mondo') {
         grouped = this.groupByCountry(data, dates);
       } else {
         grouped = this.filterByCountry(data, dates, selectedRegion);
@@ -521,11 +520,11 @@ let app = new Vue({
       this.covidData = covidData.filter(e => e.maxCases > this.minCasesInCountry);
       this.countries = this.covidData.map(e => e.country).sort();
       const topCountries = this.covidData.sort((a, b) => b.maxCases - a.maxCases).slice(0, 9).map(e => e.country);
-      const notableCountries = ['Italy']; // These appear in the region selector
+      const notableCountries = ['Italia']; // These appear in the region selector
 
       // TODO: clean this logic up later
       // expected behavior: generate/overwrite selected locations if: 1. data loaded from URL, but no selected locations are loaded. 2. data refreshed (e.g. changing region)
-      // but do not overwrite selected locations if 1. selected locations loaded from URL. 2. We switch between confirmed cases <-> deaths
+      // but do not overwrite selected locations if 1. selected locations loaded from URL. 2. We switch between casi positivi <-> deaths
       if ((this.selectedCountries.length === 0 || !this.firstLoad) && updateSelectedCountries) {
         //console.log('generating new selected countries list');
         this.selectedCountries = this.countries.filter(e => topCountries.includes(e) || notableCountries.includes(e));
@@ -617,11 +616,11 @@ let app = new Vue({
         queryUrl.append('scale', 'linear');
       }
 
-      if (this.selectedData == 'Reported Deaths') {
+      if (this.selectedData == 'deceduti') {
         queryUrl.append('data', 'deaths');
       }
 
-      if (this.selectedRegion != 'World') {
+      if (this.selectedRegion != 'Mondo') {
         queryUrl.append('region', this.selectedRegion);
       }
 
@@ -685,9 +684,9 @@ let app = new Vue({
 
     regionType() {
       switch (this.selectedRegion) {
-        case 'World':
+        case 'Mondo':
           return 'Countries';
-        case 'Italy':
+        case 'Italia':
           return 'Regions';
         default:
           return 'Regions';
@@ -699,13 +698,13 @@ let app = new Vue({
 
     paused: true,
 
-    dataTypes: ['Confirmed Cases', 'Reported Deaths'],
+    dataTypes: ['casi positivi', 'deceduti'],
 
-    selectedData: 'Confirmed Cases',
+    selectedData: 'casi positivi',
 
-    regions: ['Italy', 'World'],
+    regions: ['Italia', 'Mondo'],
 
-    selectedRegion: 'Italy',
+    selectedRegion: 'Italia',
 
     sliderSelected: false,
 
