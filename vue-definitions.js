@@ -88,7 +88,7 @@ Vue.component('graph', {
           color: 'rgba(0,0,0,0.15)'
         },
         hoverinfo:'x+y+text',
-        hovertemplate: '%{text}<br>Totale dei ' + this.selectedData +': %{x:,}<br>Weekly ' + this.selectedData +': %{y:,}<extra></extra>',
+        hovertemplate: '%{text}<br>Totale dei ' + this.selectedData +': %{x:,}' + '<br>"' + this.selectedData + '" settimanali' +': %{y:,}<extra></extra>',
       })
       );
 
@@ -104,7 +104,7 @@ Vue.component('graph', {
           size: 6,
           color: 'rgba(254, 52, 110, 1)'
         },
-        hovertemplate: '%{data.text}<br>Totale dei ' + this.selectedData +': %{x:,}<br>Weekly ' + this.selectedData +': %{y:,}<extra></extra>',
+        hovertemplate: '%{data.text}<br>Totale dei ' + this.selectedData +': %{x:,}' + '<br>"' + this.selectedData + '" settimanali' +': %{y:,}<extra></extra>',
 
       })
       );
@@ -128,11 +128,11 @@ Vue.component('graph', {
       }
 
       this.layout = {
-        title: 'Trajectory of COVID-19 '+ this.selectedData + ' (' + this.dates[this.day - 1] + ')',
+        title: 'Traiettorie "' + this.selectedData + '" COVID-19' + ' (' + this.dates[this.day - 1] + ')',
         showlegend: false,
         xaxis: {
           title: 'Totale dei ' + this.selectedData,
-          type: this.scale == 'Logarithmic Scale' ? 'log' : 'linear',
+          type: this.scale == 'Scala logaritmica' ? 'log' : 'linear',
           range: this.xrange,
           titlefont: {
             size: 24,
@@ -140,8 +140,8 @@ Vue.component('graph', {
           },
         },
         yaxis: {
-          title: 'Nuovo ' + this.selectedData + ' (nella scorsa settimana)',
-          type: this.scale == 'Logarithmic Scale' ? 'log' : 'linear',
+          title: 'Nuovi ' + this.selectedData + ' (nella scorsa settimana)',
+          type: this.scale == 'Scala logaritmica' ? 'log' : 'linear',
           range: this.yrange,
           titlefont: {
             size: 24,
@@ -191,7 +191,7 @@ Vue.component('graph', {
     setxrange() {
       let xmax = Math.max(...this.filteredCases, 50);
 
-      if (this.scale == 'Logarithmic Scale') {
+      if (this.scale == 'Scala logaritmica') {
         this.xrange = [1, Math.ceil(Math.log10(1.5*xmax))]
       } else {
         this.xrange = [-0.49*Math.pow(10,Math.floor(Math.log10(xmax))), Math.round(1.05 * xmax)];
@@ -203,7 +203,7 @@ Vue.component('graph', {
       let ymax = Math.max(...this.filteredSlope, 50);
       let ymin = Math.min(...this.filteredSlope);
 
-      if (this.scale == 'Logarithmic Scale') {
+      if (this.scale == 'Scala logaritmica') {
         if (ymin < 10) {
           // shift ymin on log scale when fewer than 10 cases
           this.yrange = [0, Math.ceil(Math.log10(1.5*ymax))]
@@ -315,9 +315,9 @@ let app = new Vue({
         let myScale = urlParameters.get('scale').toLowerCase();
 
         if (myScale == 'log') {
-          this.selectedScale = 'Logarithmic Scale';
+          this.selectedScale = 'Scala logaritmica';
         } else if (myScale == 'linear') {
-          this.selectedScale = 'Linear Scale';
+          this.selectedScale = 'Scala lineare';
         }
       }
 
@@ -612,7 +612,7 @@ let app = new Vue({
 
       let queryUrl = new URLSearchParams();
 
-      if (this.selectedScale == 'Linear Scale') {
+      if (this.selectedScale == 'Scala lineare') {
         queryUrl.append('scale', 'linear');
       }
 
@@ -687,9 +687,9 @@ let app = new Vue({
         case 'Mondo':
           return 'Countries';
         case 'Italia':
-          return 'Regions';
+          return 'Regioni';
         default:
-          return 'Regions';
+          return 'Regioni';
       }
     }
   },
@@ -712,9 +712,9 @@ let app = new Vue({
 
     icon: 'icons/play.svg',
 
-    scale: ['Logarithmic Scale', 'Linear Scale'],
+    scale: ['Scala logaritmica', 'Scala lineare'],
 
-    selectedScale: 'Logarithmic Scale',
+    selectedScale: 'Scala logaritmica',
 
     minCasesInCountry: 50,
 
